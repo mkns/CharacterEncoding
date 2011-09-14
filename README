@@ -1,0 +1,10 @@
+This attempts to help me understand how Java encodes characters. The
+character which is used to identify this is 0xE2, which is a Latin-1
+(ISO-8859-1) character. This gets converted to Unicode, and when you
+look at data3.txt after running this script, you'll see that the raw
+bytes are different. The neat thing is that the characters in the file
+are the same, so long as you are looking at them using a system
+(e.g. terminal) which is using the right encoding. So, for data2.txt,
+you need a Latin-1 (ISO-8859-1) encoded terminal, whereas for
+data3.txt, you want a UTF-8 terminal. If you compare the characters
+this way, they are the same.
