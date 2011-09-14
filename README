@@ -8,3 +8,9 @@ are the same, so long as you are looking at them using a system
 you need a Latin-1 (ISO-8859-1) encoded terminal, whereas for
 data3.txt, you want a UTF-8 terminal. If you compare the characters
 this way, they are the same.
+
+If you look at the Utf8Encoding class, you'll see a flipping massive
+comment up the top which I wrote as I ventured through some
+investigations to determine how UTF-8 works.  And I got there - it's
+actually relatively simple.  But most things are, once you know it,
+eh?
