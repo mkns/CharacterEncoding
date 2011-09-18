@@ -1,0 +1,53 @@
+#!/usr/bin/perl -w
+
+use strict;
+use Encode;
+use DBI;
+
+our $dbh;
+
+my $char = chr 0xa2;
+my $string = join( "", "The character is :$char:" );
+open( FILE, "> output.txt" ) or die $!;
+print FILE $string;
+close( FILE );
+
+open( FILE, "> output-latin.txt" ) or die $!;
+my $latin_string = encode( "iso-8859-1", $string );
+print FILE $latin_string;
+close( FILE );
+
+open( FILE, "> output-utf.txt" ) or die $!;
+my $utf_string = encode( "utf-8", $string );
+print FILE $utf_string;
+close( FILE );
+
+open( FILE, "output-utf.txt" ) or die $!;
+my $input = join( "", <FILE> );
+close( FILE );
+print $input, "\n";
+
+$dbh = connect_db();
+$dbh->do( "truncate table foo" );
+my $q = "INSERT INTO foo SET text=?";
+$dbh->do( $q, undef, $latin_string );
+$dbh->do( "set names 'utf8'" );
+$dbh->do( $q, undef, $utf_string );
+$dbh->disconnect();
+
+# fresh connection, therefore back to default 'set names'
+$dbh = connect_db();
+$q = "SELECT * FROM foo";
+my $sth = $dbh->prepare( $q );
+$sth->execute();
+while ( my $row = $sth->fetchrow_hashref() ) {
+  my $filename = "dbh" . $row->{id} . ".txt";
+  open( FILE, "> $filename" ) or die $!;
+  print FILE $row->{text};
+  close( FILE );
+}
+
+sub connect_db {
+  $dbh = DBI->connect( "dbi:mysql:encoding", "root", "" )
+    or die $DBI::errstr;
+}
